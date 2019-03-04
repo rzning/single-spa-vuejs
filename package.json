@@ -6,7 +6,13 @@
   "repository": "https://github.com/rzning/single-spa-vuejs.git",
   "author": "Zhenning Ruan <rzning@outlook.com>",
   "license": "MIT",
-  "files": ["lib", "src"],
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "build": "babel src -d lib"
+  },
   "keywords": [
     "single-spa",
     "single",
@@ -21,5 +27,14 @@
   },
   "peerDependencies": {
     "vue": "*"
-  }
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.4",
+    "@babel/plugin-transform-modules-umd": "^7.2.0",
+    "@babel/preset-env": "^7.3.4"
+  },
+  "browserslist": [
+    "last 2 versions"
+  ]
 }
