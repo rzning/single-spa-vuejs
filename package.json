@@ -1,0 +1,25 @@
+{
+  "name": "single-spa-vuejs",
+  "version": "0.0.0",
+  "description": "a single-spa plugin for Vue applications",
+  "main": "lib/index.js",
+  "repository": "https://github.com/rzning/single-spa-vuejs.git",
+  "author": "Zhenning Ruan <rzning@outlook.com>",
+  "license": "MIT",
+  "files": ["lib", "src"],
+  "keywords": [
+    "single-spa",
+    "single",
+    "spa",
+    "vuejs",
+    "vue",
+    "application"
+  ],
+  "homepage": "https://github.com/rzning/single-spa-vuejs",
+  "bugs": {
+    "url": "https://github.com/rzning/single-spa-vuejs/issues"
+  },
+  "peerDependencies": {
+    "vue": "*"
+  }
+}
