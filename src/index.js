@@ -16,7 +16,7 @@ export default function singleSpaVue (customOptions) {
         throw new Error('single-spa-vuejs must be passed options.Vue')
     }
     if (!options.appOptions) {
-        throw new Error('single-spa-vuejs must be passed opts.appOptions')
+        throw new Error('single-spa-vuejs must be passed options.appOptions')
     }
     const lifecycles = {
         bootstrap: bootstrap.bind(null, options),
@@ -33,21 +33,27 @@ function bootstrap (options) {
 
 function mount (options, props) {
     return Promise.resolve().then(() => {
-        const { vueOptions = {}, vuePlugins = [], ...otherProps } = props
-        const appOptions = {
+        const { appOptions = {}, vuePlugins = [], ...otherProps } = props
+        const instanceOptions = {
             ...options.appOptions,
-            ...vueOptions,
+            ...appOptions,
             data: {
+                globalProps: {},
                 ...(options.appOptions.data || {}),
                 ...otherProps
             }
         }
+        const Vue = options.Vue
         if (Array.isArray(vuePlugins)) {
             for (let plugin of vuePlugins) {
-                options.Vue.use(plugin)
+                if (Array.isArray(plugin)) {
+                    Vue.use.apply(Vue, plugin)
+                } else {
+                    Vue.use(plugin)
+                }
             }
         }
-        options.instance = new options.Vue(appOptions)
+        options.instance = new Vue(instanceOptions)
     })
 }
 
@@ -68,7 +74,11 @@ function update (options, props) {
         const instance = options.instance
         if (instance.$set && typeof props === 'object') {
             for (let name in props) {
-                instance.$set(instance, name, props[name])
+                if (name in instance) {
+                    instance[name] = props[name]
+                } else {
+                    instance.$set(instance.globalProps, name, props[name])
+                }
             }
         }
         resolve()

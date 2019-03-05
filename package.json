@@ -1,6 +1,6 @@
 {
   "name": "single-spa-vuejs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "a single-spa plugin for Vue applications",
   "main": "lib/index.js",
   "repository": "https://github.com/rzning/single-spa-vuejs.git",
