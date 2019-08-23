@@ -31,56 +31,49 @@ function bootstrap (options) {
     return Promise.resolve()
 }
 
-function mount (options, props) {
-    return Promise.resolve().then(() => {
-        const { appOptions = {}, vuePlugins = [], ...otherProps } = props
-        const instanceOptions = {
-            ...options.appOptions,
-            ...appOptions,
-            data: {
-                globalProps: {},
-                ...(options.appOptions.data || {}),
-                ...otherProps
+async function mount (options, props) {
+    const { appOptions = {}, vuePlugins = [], ...otherProps } = props
+    const instanceOptions = {
+        ...options.appOptions,
+        ...appOptions
+    }
+    instanceOptions.data = {
+        // globalProps is used to store the new reactive data in the update method
+        globalProps: {},
+        ...(instanceOptions.data || {}),
+        ...otherProps
+    }
+    const Vue = options.Vue
+    if (Array.isArray(vuePlugins)) {
+        for (let plugin of vuePlugins) {
+            if (Array.isArray(plugin)) {
+                Vue.use.apply(Vue, plugin)
+            } else {
+                Vue.use(plugin)
             }
         }
-        const Vue = options.Vue
-        if (Array.isArray(vuePlugins)) {
-            for (let plugin of vuePlugins) {
-                if (Array.isArray(plugin)) {
-                    Vue.use.apply(Vue, plugin)
-                } else {
-                    Vue.use(plugin)
-                }
-            }
-        }
-        options.instance = new Vue(instanceOptions)
-    })
+    }
+    options.instance = new Vue(instanceOptions)
 }
 
-function unmount (options) {
-    return new Promise((resolve) => {
-        if (options.instance.$destroy) {
-            const elem = options.instance.$el
-            options.instance.$destroy()
-            options.instance = null
-            elem.innerHTML = ''
-        }
-        resolve()
-    })
+async function unmount (options) {
+    if (options.instance.$destroy) {
+        const elem = options.instance.$el
+        options.instance.$destroy()
+        options.instance = null
+        elem.innerHTML = ''
+    }
 }
 
-function update (options, props) {
-    return new Promise((resolve) => {
-        const instance = options.instance
-        if (instance.$set && typeof props === 'object') {
-            for (let name in props) {
-                if (name in instance) {
-                    instance[name] = props[name]
-                } else {
-                    instance.$set(instance.globalProps, name, props[name])
-                }
+async function update (options, props) {
+    const instance = options.instance
+    if (instance.$set && typeof props === 'object') {
+        for (let name in props) {
+            if (name in instance) {
+                instance[name] = props[name]
+            } else {
+                instance.$set(instance.globalProps, name, props[name])
             }
         }
-        resolve()
-    })
+    }
 }
